@@ -1,8 +1,7 @@
 // This file is auto-generated during build
 // Do not edit manually
 
-export const EMBEDDED_TEMPLATE = `root: /Users/mateuszklusek/vault/projects/task-picker
-shell: /bin/zsh
+export const EMBEDDED_TEMPLATE = `shell: /bin/zsh
 
 filesSearchInclude:
   - package.json
@@ -19,8 +18,9 @@ userCommands:
     label: run test
     runner: 'npx'
 
-dirExec:
-  - dir: ./src
-    label: run file in dir
+patternExec:
+  - include: "./src/**/*.ts"
+    exclude: "**/*.test.ts"
     runner: 'npx tsx'
-    # #TODO update this to handle runners per file extension`;
+    label: run ts file in src
+`;

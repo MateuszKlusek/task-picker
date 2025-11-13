@@ -5,6 +5,7 @@ import { EMBEDDED_TEMPLATE } from "../template";
 import { Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
+import { GENERATOR_MAP } from "./constants";
 
 export class ConfigManager {
   private config: Config | null = null;
@@ -25,6 +26,22 @@ export class ConfigManager {
     const config = await this.getConfigFile();
     config[key] = value;
     await this.saveConfigFile(config);
+  }
+
+  public async getUsableGenerators() {
+    const generators: string[] = [];
+    console.log("this.config", this.config);
+    if (!this.config) {
+      return generators;
+    }
+
+    for (const generator of Object.keys(GENERATOR_MAP)) {
+      if (generator in this.config) {
+        generators.push(generator);
+      }
+    }
+
+    return generators;
   }
 
   public async saveConfigFile(config: Config): Promise<void> {
@@ -62,7 +79,7 @@ export class ConfigManager {
     }
   }
 
-  async loadConfig(): Promise<Config> {
+  async loadConfig() {
     try {
       const config = await this.getConfigFile();
       this.config = config;
@@ -85,17 +102,19 @@ export class ConfigManager {
       }
 
       log.debug(`Config loaded: ${JSON.stringify(this.config, null, 2)}`);
-      return this.config;
     } catch (error) {
       throw new Error(`Error loading config: ${error}`);
     }
   }
 
-  getConfig(): Config | null {
+  public getConfig() {
+    if (!this.config) {
+      throw new Error("Config not loaded");
+    }
     return this.config;
   }
 
-  logConfig(): void {
+  public logConfig(): void {
     if (this.config) {
       log.debug(`Config: ${JSON.stringify(this.config, null, 2)}`);
     }
@@ -127,6 +146,8 @@ export class ConfigManager {
       }
     }
 
+    await this.upsertConfigKey("root", process.cwd());
+
     // Fallback: try to load from file system (for development)
     if (!templateConfig || Object.keys(templateConfig).length === 0) {
       const templatePath = path.resolve(
@@ -148,7 +169,6 @@ export class ConfigManager {
       }
     }
 
-    console.log({ templateConfig });
     const finalConfig = {
       ...templateConfig,
       ...templateOverride,
@@ -164,7 +184,7 @@ export class ConfigManager {
     log.info("You can now edit this file to add your task definitions.");
   }
 
-  async validateConfig(): Promise<boolean> {
+  public async validateConfig(): Promise<boolean> {
     try {
       await this.loadConfig();
       log.info("Configuration is valid");

@@ -1,4 +1,3 @@
-root: /Users/mateuszklusek/vault/projects/task-picker
 shell: /bin/zsh
 
 filesSearchInclude:
@@ -16,8 +15,8 @@ userCommands:
     label: run test
     runner: 'npx'
 
-dirExec:
-  - dir: ./src
-    label: run file in dir
+patternExec:
+  - include: "./src/**/*.ts"
+    exclude: "**/*.test.ts"
     runner: 'npx tsx'
-    # #TODO update this to handle runners per file extension
+    label: run ts file in src

@@ -23,17 +23,17 @@ export interface Taskfile {
 }
 
 export class TaskfileAdapter extends FileAdapterAbstract {
-  parse(
-    config: Config,
-    colorIndex: number,
-    taskfilePath: string
-  ): SelectionItem[] {
-    if (!fs.existsSync(taskfilePath)) {
-      return [];
-    }
-
+  async parse({
+    config,
+    colorIndex,
+    fileName,
+  }: {
+    config?: Config;
+    colorIndex: number;
+    fileName: string;
+  }): Promise<SelectionItem[]> {
     try {
-      const yamlContent = fs.readFileSync(taskfilePath, "utf-8");
+      const yamlContent = fs.readFileSync(fileName, "utf-8");
       const taskfile: Taskfile = yaml.load(yamlContent) as Taskfile;
 
       const items: SelectionItem[] = [];

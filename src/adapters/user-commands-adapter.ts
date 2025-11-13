@@ -1,10 +1,21 @@
-import { COLORS_ROTATION, SelectionItem, UserCommand } from "../types/core";
+import { FileAdapterAbstract } from "../app/adapter.abstract";
+import {
+  COLORS_ROTATION,
+  Config,
+  SelectionItem,
+  UserCommand,
+} from "../types/core";
 
-export class UserCommandsAdapter {
-  static parse(
-    userCommands: UserCommand[],
-    colorIndex: number
-  ): SelectionItem[] {
+export class UserCommandsAdapter extends FileAdapterAbstract {
+  async parse({
+    config,
+    colorIndex,
+    fileName,
+  }: {
+    config?: Config;
+    colorIndex: number;
+    fileName: string;
+  }): Promise<SelectionItem[]> {
     const items: SelectionItem[] = [];
 
     for (const userCmd of userCommands) {
@@ -17,6 +28,6 @@ export class UserCommandsAdapter {
       });
     }
 
-    return items;
+    return Promise.resolve(items);
   }
 }

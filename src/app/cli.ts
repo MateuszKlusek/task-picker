@@ -1,14 +1,15 @@
 import { Command } from "commander";
 import { log } from "../utils/logger";
-import { ConfigManager } from "./config";
+import { ConfigManager } from "./config-manager";
 
 export class CLI {
   private program: Command;
   private didRun: boolean = false;
+  private configManager: ConfigManager;
 
-  constructor() {
+  constructor({ configManager }: { configManager: ConfigManager }) {
     this.program = new Command();
-
+    this.configManager = configManager;
     this.setupCommands();
 
     this.program.hook("preAction", () => {
@@ -33,7 +34,7 @@ export class CLI {
       .option("-o, --override", "Override existing configuration")
       .action(async (options) => {
         this.didRun = true;
-        await new ConfigManager().initializeConfig(options.override);
+        await this.configManager.initializeConfig(options.override);
       });
 
     this.program
@@ -86,7 +87,7 @@ export class CLI {
   private updateRoot(): void {
     this.didRun = true;
     const cwd = process.cwd();
-    new ConfigManager().upsertConfigKey("root", cwd);
+    this.configManager.upsertConfigKey("root", cwd);
     log.info(`Updating root directory to: ${cwd}`);
   }
 }

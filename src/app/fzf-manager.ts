@@ -1,9 +1,9 @@
 import { spawn } from "child_process";
-import { Colors, Config, SelectionItem } from "../types/core";
+import { Colors, SelectionItem } from "../types/core";
 import { log } from "../utils/logger";
 
 export class FzfManager {
-  static async run(items: SelectionItem[], config: Config): Promise<void> {
+  static async run(items: SelectionItem[]): Promise<void> {
     if (items.length === 0) {
       log.warn(
         'No tasks found. Run "task-picker init" to create a configuration file.'

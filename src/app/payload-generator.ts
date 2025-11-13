@@ -1,24 +1,30 @@
-import { DirExecAdapter } from "../adapters/dir-exec-adapter";
-import { PackageJsonAdapter } from "../adapters/package-json-adapter";
-import { TaskfileAdapter } from "../adapters/taskfile-adapter";
+import { PatternExecAdapter } from "../adapters/pattern-exec-adapter";
 import { UserCommandsAdapter } from "../adapters/user-commands-adapter";
 import { Config, SelectionItem } from "../types/core";
-import { FileAdapterAbstract } from "./adapter.abstract";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
+import { ConfigManager } from "./config-manager";
 
 export class PayloadGenerator {
-  static async generate(config: Config): Promise<SelectionItem[]> {
+  static async generate({
+    configManager,
+  }: {
+    configManager: ConfigManager;
+  }): Promise<SelectionItem[]> {
     const items: SelectionItem[] = [];
 
     let colorIndex = 0;
+    const config = await configManager.loadConfig();
 
     const foundFiles = await FileUtils.findFiles(
-      config.root,
-      config.filesSearchInclude
+      config.root || "./",
+      config.filesSearchInclude || []
     );
 
     log.debug(`Found config files: ${foundFiles.join(", ")}`);
+
+    const usableGenerators = await configManager.getUsableGenerators();
+    console.log("usableGenerators", usableGenerators);
 
     for (const fileNameFullPath of foundFiles) {
       const fileName = fileNameFullPath.split("/").pop();
@@ -32,11 +38,11 @@ export class PayloadGenerator {
       }
 
       const adapterInstance = new adapter();
-      const thisInstanceItems = adapterInstance.parse(
+      const thisInstanceItems = await adapterInstance.parse({
         config,
         colorIndex,
-        fileNameFullPath
-      );
+        fileName: fileNameFullPath,
+      });
 
       if (thisInstanceItems.length > 0) {
         colorIndex++;
@@ -45,23 +51,22 @@ export class PayloadGenerator {
     }
 
     // Parse user commands
-    const userItems = UserCommandsAdapter.parse(
-      config.userCommands,
-      colorIndex
-    );
+    const userItems = await new UserCommandsAdapter().parse({
+      config,
+      colorIndex,
+      fileName: "",
+    });
     items.push(...userItems);
 
     // Parse dirExe
-    const dirExecItems = new DirExecAdapter().parse(config, colorIndex);
-    items.push(...dirExecItems);
+    const patternExecItems = await new PatternExecAdapter().parse({
+      config,
+      colorIndex,
+      fileName: "",
+    });
+    items.push(...patternExecItems);
 
     log.debug(`Generated ${items.length} selection items`);
     return items;
   }
 }
-
-const adapterMap: Record<string, new () => FileAdapterAbstract> = {
-  "package.json": PackageJsonAdapter,
-  "taskfile.yml": TaskfileAdapter,
-  "taskfile.yaml": TaskfileAdapter,
-};

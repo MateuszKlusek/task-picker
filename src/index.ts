@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 
 import { CLI } from "./app/cli";
-import { ConfigManager } from "./app/config";
+import { ConfigManager } from "./app/config-manager";
 import { FzfManager } from "./app/fzf-manager";
 import { PayloadGenerator } from "./app/payload-generator";
 import { log } from "./utils/logger";
 
 async function main(): Promise<void> {
-  const cli = new CLI();
+  const configManager = new ConfigManager();
+  const cli = new CLI({ configManager });
 
   if (!cli.getDidRun()) {
     try {
-      const config = await new ConfigManager().loadConfig();
-      console.log("config", config);
-      const items = await PayloadGenerator.generate(config);
+      await configManager.loadConfig();
+      const items = await PayloadGenerator.generate({ configManager });
 
-      await FzfManager.run(items, config);
+      await FzfManager.run(items);
     } catch (error) {
       log.error(error as string);
       process.exit(1);

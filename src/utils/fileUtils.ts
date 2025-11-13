@@ -1,11 +1,11 @@
 import * as crypto from "crypto";
+import { glob } from "fast-glob";
 import * as fs from "fs";
-import { glob } from "glob";
 
 export class FileUtils {
   static async findFiles(
     searchDir: string,
-    patterns: string[],
+    patterns: string[]
   ): Promise<string[]> {
     const foundFiles: string[] = [];
 
@@ -14,7 +14,7 @@ export class FileUtils {
         const files = await glob(`**/${pattern}`, {
           cwd: searchDir,
           absolute: true,
-          nodir: true,
+          onlyFiles: true,
         });
         foundFiles.push(...files);
       } catch (error) {

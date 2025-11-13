@@ -15,16 +15,17 @@ export interface SelectionItem {
 }
 
 export interface Config {
-  root: string;
-  userCommands: UserCommand[];
-  filesSearchInclude: string[];
+  root?: string;
+  userCommands?: UserCommand[];
+  filesSearchInclude?: string[];
   shell?: string;
-  dirExec: DirExec[];
+  patternExec?: PatternExec[];
 }
 
-export interface DirExec {
-  dir: string;
-  label: string;
+export interface PatternExec {
+  include: string;
+  exclude?: string;
+  label?: string;
   runner: string;
 }
 
