@@ -1,0 +1,142 @@
+version: '3'
+
+vars:
+  BINARY_NAME: some-name
+  BUILD_DIR: build
+  MAIN_PATH: cmd/some-name/main.go
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list-all
+
+  build:
+    desc: "Build the app dev"
+    cmds:
+      - go build -v -ldflags="-X 'some-name/internal/app.Version=1.0.0'" ./cmd/some-name
+
+
+  run:
+    desc: "Running the app dev"
+    cmds: 
+      - ./taskfzf
+
+  build-sun:
+    desc: Build the application
+    deps: [clean]
+    silent: true
+    cmds:
+      - echo "Building {{.BINARY_NAME}}..."
+      - mkdir -p {{.BUILD_DIR}}
+      - go build -ldflags "-X main.Version=1.0.0" -o {{.BUILD_DIR}}/{{.BINARY_NAME}} {{.MAIN_PATH}}
+      # - echo "✓ Build complete: {{.BUILD_DIR}}/{{.BINARY_NAME}}"
+      - |
+        if command -v ls >/dev/null 2>&1; then
+          echo "File size: $(ls -lh {{.BUILD_DIR}}/{{.BINARY_NAME}} | awk '{print $5}')"
+        fi
+
+  clean:
+    desc: Clean build artifacts
+    silent: true
+    cmds:
+      - echo "Cleaning build artifacts..."
+      - rm -rf {{.BUILD_DIR}}
+      - go clean
+
+  test:
+    desc: Run tests
+    silent: true
+    cmds:
+      - echo "Running tests..."
+      - go test -v ./...
+
+  test-coverage:
+    desc: Run tests with coverage report
+    silent: true
+    cmds:
+      - echo "Running tests with coverage..."
+      - go test -v -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out
+
+  install:
+    desc: Install the application
+    silent: true
+    cmds:
+      - echo "Installing {{.BINARY_NAME}}..."
+      - go install ./cmd/some-name
+
+  run-sun:
+    desc: Build and run the application
+    deps: [build]
+    cmds:
+      - echo "Running {{.BINARY_NAME}}..."
+      - ./{{.BUILD_DIR}}/{{.BINARY_NAME}}
+
+  init:
+    desc: Initialize some-name configuration
+    deps: [build]
+    cmds:
+      - echo "Initializing some-name..."
+      - ./{{.BUILD_DIR}}/{{.BINARY_NAME}} init
+
+  dev:
+    desc: Run in development mode with custom arguments
+    deps: [build]
+    cmds:
+      - echo "Running in development mode..."
+      - ./{{.BUILD_DIR}}/{{.BINARY_NAME}} {{.CLI_ARGS | default ""}}
+    vars:
+      CLI_ARGS: '{{.CLI_ARGS | default ""}}'
+
+  lint:
+    desc: Run linters
+    silent: true
+    cmds:
+      - echo "Running linters..."
+      - go vet ./...
+      - |
+        if command -v golangci-lint >/dev/null 2>&1; then
+          golangci-lint run
+        else
+          echo "golangci-lint not found, skipping..."
+        fi
+
+  format:
+    desc: Format Go code
+    silent: true
+    cmds:
+      - echo "Formatting Go code..."
+      - go fmt ./...
+
+  mod-tidy:
+    desc: Tidy Go modules
+    silent: true
+    cmds:
+      - echo "Tidying Go modules..."
+      - go mod tidy
+
+  all:
+    desc: Clean, build, test, and lint
+    deps: [clean, build, test, lint]
+
+  release:
+    desc: Build for multiple platforms
+    deps: [clean]
+    silent: true
+    cmds:
+      - echo "Building for multiple platforms..."
+      - mkdir -p {{.BUILD_DIR}}
+      - |
+        GOOS=linux GOARCH=amd64 go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-linux-amd64 {{.MAIN_PATH}}
+        GOOS=darwin GOARCH=amd64 go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-darwin-amd64 {{.MAIN_PATH}}
+        GOOS=darwin GOARCH=arm64 go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-darwin-arm64 {{.MAIN_PATH}}
+        GOOS=windows GOARCH=amd64 go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-windows-amd64.exe {{.MAIN_PATH}}
+      - echo "✓ Release builds complete"
+
+  help:
+    desc: Show this help message
+    cmds:
+      - echo "Available tasks:"
+      - task --list-all 
+    silent: true

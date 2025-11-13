@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.DS_Store
+
+.clinic
+
+notes.md
+.task-picker-config.yaml

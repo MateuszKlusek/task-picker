@@ -1,0 +1,177 @@
+import fs from "fs";
+import * as yaml from "js-yaml";
+import * as path from "path";
+import { EMBEDDED_TEMPLATE } from "../template";
+import { Config } from "../types/core";
+import { FileUtils } from "../utils/fileUtils";
+import { log } from "../utils/logger";
+
+export class ConfigManager {
+  private config: Config | null = null;
+  private readonly configFileName = ".task-picker-config.yaml";
+  private cwd: string = process.cwd();
+  private configPath: string = path.join(this.cwd, this.configFileName);
+
+  constructor() {
+    this.config = null;
+    this.cwd = process.cwd();
+    this.configPath = path.join(this.cwd, this.configFileName);
+  }
+
+  public async upsertConfigKey<K extends keyof Config>(
+    key: K,
+    value: Config[K]
+  ): Promise<void> {
+    const config = await this.getConfigFile();
+    config[key] = value;
+    await this.saveConfigFile(config);
+  }
+
+  public async saveConfigFile(config: Config): Promise<void> {
+    try {
+      const yamlContent = yaml.dump(config, {
+        indent: 2,
+        lineWidth: 120,
+        noRefs: true,
+        sortKeys: false,
+      });
+
+      fs.writeFileSync(this.configPath, yamlContent, {
+        encoding: "utf-8",
+        flag: "w",
+      });
+    } catch (error) {
+      throw new Error(`Error saving config file: ${error}`);
+    }
+  }
+
+  public async getConfigFile(): Promise<Config> {
+    const configPath = path.join(this.cwd, this.configFileName);
+    log.info(`Getting config file from: ${configPath}`);
+
+    if (!FileUtils.fileExists(configPath)) {
+      throw new Error(`Configuration file not found: ${configPath}`);
+    }
+
+    try {
+      const yamlContent = FileUtils.readFile(configPath);
+      const config = yaml.load(yamlContent) as Config;
+      return config;
+    } catch (error) {
+      throw new Error(`Error getting config file: ${error}`);
+    }
+  }
+
+  async loadConfig(): Promise<Config> {
+    try {
+      const config = await this.getConfigFile();
+      this.config = config;
+
+      // Set defaults
+      if (!this.config.root) {
+        this.config.root = this.cwd;
+      }
+
+      if (!this.config.userCommands) {
+        this.config.userCommands = [];
+      }
+
+      if (!this.config.filesSearchInclude) {
+        this.config.filesSearchInclude = [
+          "package.json",
+          "Taskfile.yaml",
+          "Taskfile.yml",
+        ];
+      }
+
+      log.debug(`Config loaded: ${JSON.stringify(this.config, null, 2)}`);
+      return this.config;
+    } catch (error) {
+      throw new Error(`Error loading config: ${error}`);
+    }
+  }
+
+  getConfig(): Config | null {
+    return this.config;
+  }
+
+  logConfig(): void {
+    if (this.config) {
+      log.debug(`Config: ${JSON.stringify(this.config, null, 2)}`);
+    }
+  }
+
+  async initializeConfig(
+    override: boolean = false,
+    templateOverride: any = {}
+  ): Promise<void> {
+    log.debug(`InitializeConfig: ${override}`);
+    const configPath = path.join(process.cwd(), this.configFileName);
+
+    if (FileUtils.fileExists(configPath) && !override) {
+      log.info(`${this.configFileName} already exists`);
+      log.info("Use --override flag to overwrite existing configuration");
+      return;
+    }
+
+    // Load template - try embedded template first, then fallback to file system
+    let templateConfig = {};
+
+    // First, try embedded template (works for global installations)
+    if (EMBEDDED_TEMPLATE) {
+      try {
+        templateConfig = yaml.load(EMBEDDED_TEMPLATE) as any;
+        log.debug("Loaded embedded template");
+      } catch (error) {
+        log.warn(`Failed to load embedded template: ${error}`);
+      }
+    }
+
+    // Fallback: try to load from file system (for development)
+    if (!templateConfig || Object.keys(templateConfig).length === 0) {
+      const templatePath = path.resolve(
+        process.cwd(),
+        "config/.task-picker.config-template.yaml"
+      );
+
+      console.log("templatePath", templatePath);
+
+      if (FileUtils.fileExists(templatePath)) {
+        try {
+          const templateContent = FileUtils.readFile(templatePath);
+          console.log("templateContent", templateContent);
+          templateConfig = yaml.load(templateContent) as any;
+          log.debug(`Loaded template from: ${templatePath}`);
+        } catch (error) {
+          log.warn(`Failed to load template from ${templatePath}: ${error}`);
+        }
+      }
+    }
+
+    console.log({ templateConfig });
+    const finalConfig = {
+      ...templateConfig,
+      ...templateOverride,
+      root: process.cwd(),
+    };
+
+    console.log("finalConfig", finalConfig);
+    console.log("configPath", configPath);
+
+    await this.saveConfigFile(finalConfig);
+
+    log.info(`Created ${this.configFileName} with template configuration`);
+    log.info("You can now edit this file to add your task definitions.");
+  }
+
+  async validateConfig(): Promise<boolean> {
+    try {
+      await this.loadConfig();
+      log.info("Configuration is valid");
+      return true;
+    } catch (error) {
+      log.error(`Configuration validation failed: ${error}`);
+      return false;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "mocks for task-picker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "webpack --config webpack.config.js",
+    "test": "jest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "clean": "rm -rf dist",
+    "prepare": "husky install",
+    "prepublishOnly": "npm run test && npm run build",
+    "serve": "http-server dist -p 8080",
+    "list": "ls -la"
+  },
+  "author": "MK (testing)",
+  "license": "MIT"
+}

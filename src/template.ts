@@ -1,0 +1,26 @@
+// This file is auto-generated during build
+// Do not edit manually
+
+export const EMBEDDED_TEMPLATE = `root: /Users/mateuszklusek/vault/projects/task-picker
+shell: /bin/zsh
+
+filesSearchInclude:
+  - package.json
+  - Taskfile.yaml
+  - Taskfile.yml
+
+userCommands:
+  - command: ls
+    workDir: ./
+    label: list files
+    runner: ''
+  - command: run test  
+    workDir: ./
+    label: run test
+    runner: 'npx'
+
+dirExec:
+  - dir: ./src
+    label: run file in dir
+    runner: 'npx tsx'
+    # #TODO update this to handle runners per file extension`;
