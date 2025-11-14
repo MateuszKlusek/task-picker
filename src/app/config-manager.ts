@@ -5,6 +5,7 @@ import { EMBEDDED_TEMPLATE } from "../template";
 import { Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
+import { FileAdapterAbstract } from "./adapter.abstract";
 import { GENERATOR_MAP } from "./constants";
 
 export class ConfigManager {
@@ -29,7 +30,7 @@ export class ConfigManager {
   }
 
   public async getUsableGenerators() {
-    const generators: string[] = [];
+    const generators: Record<string, typeof FileAdapterAbstract> = {};
     console.log("this.config", this.config);
     if (!this.config) {
       return generators;
@@ -37,7 +38,7 @@ export class ConfigManager {
 
     for (const generator of Object.keys(GENERATOR_MAP)) {
       if (generator in this.config) {
-        generators.push(generator);
+        generators[generator] = GENERATOR_MAP[generator];
       }
     }
 

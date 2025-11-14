@@ -1,6 +1,6 @@
 import { PatternExecAdapter } from "../adapters/pattern-exec-adapter";
 import { UserCommandsAdapter } from "../adapters/user-commands-adapter";
-import { Config, SelectionItem } from "../types/core";
+import { SelectionItem } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
 import { ConfigManager } from "./config-manager";
@@ -14,7 +14,7 @@ export class PayloadGenerator {
     const items: SelectionItem[] = [];
 
     let colorIndex = 0;
-    const config = await configManager.loadConfig();
+    const config = configManager.getConfig();
 
     const foundFiles = await FileUtils.findFiles(
       config.root || "./",

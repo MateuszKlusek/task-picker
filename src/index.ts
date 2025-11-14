@@ -13,9 +13,8 @@ async function main(): Promise<void> {
   if (!cli.getDidRun()) {
     try {
       await configManager.loadConfig();
-      const items = await PayloadGenerator.generate({ configManager });
-
-      await FzfManager.run(items);
+      const payload = await PayloadGenerator.generate({ configManager });
+      await FzfManager.run(payload);
     } catch (error) {
       log.error(error as string);
       process.exit(1);
