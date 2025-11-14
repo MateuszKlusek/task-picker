@@ -6,11 +6,9 @@ export class PatternExecAdapter extends FileAdapterAbstract {
   async parse({
     config,
     colorIndex,
-    fileName,
   }: {
     config?: Config;
     colorIndex: number;
-    fileName: string;
   }): Promise<SelectionItem[]> {
     const items: SelectionItem[] = [];
 

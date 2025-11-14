@@ -30,8 +30,7 @@ export class ConfigManager {
   }
 
   public async getUsableGenerators() {
-    const generators: Record<string, typeof FileAdapterAbstract> = {};
-    console.log("this.config", this.config);
+    const generators: Record<string, new () => FileAdapterAbstract> = {};
     if (!this.config) {
       return generators;
     }

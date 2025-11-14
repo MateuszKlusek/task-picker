@@ -11,11 +11,9 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
   async parse({
     config,
     colorIndex,
-    fileName,
   }: {
     config?: Config;
     colorIndex: number;
-    fileName: string;
   }): Promise<SelectionItem[]> {
     try {
       const jsonContent = fs.readFileSync(fileName, "utf-8");

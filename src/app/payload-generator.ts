@@ -26,29 +26,43 @@ export class PayloadGenerator {
     const usableGenerators = await configManager.getUsableGenerators();
     console.log("usableGenerators", usableGenerators);
 
-    for (const fileNameFullPath of foundFiles) {
-      const fileName = fileNameFullPath.split("/").pop();
-      if (!fileName) {
-        continue;
-      }
+    const i = await Promise.all(
+      Object.entries(usableGenerators).map(
+        async ([generatorName, generator]) => {
+          const g = new generator();
+          const thisInstanceItems = await g.parse({
+            config,
+            colorIndex,
+            fileName: "",
+          });
+          items.push(...thisInstanceItems);
+        }
+      )
+    );
 
-      const adapter = adapterMap?.[fileName.toLowerCase()];
-      if (!adapter) {
-        continue;
-      }
+    // for (const fileNameFullPath of foundFiles) {
+    //   const fileName = fileNameFullPath.split("/").pop();
+    //   if (!fileName) {
+    //     continue;
+    //   }
 
-      const adapterInstance = new adapter();
-      const thisInstanceItems = await adapterInstance.parse({
-        config,
-        colorIndex,
-        fileName: fileNameFullPath,
-      });
+    //   const adapter = adapterMap?.[fileName.toLowerCase()];
+    //   if (!adapter) {
+    //     continue;
+    //   }
 
-      if (thisInstanceItems.length > 0) {
-        colorIndex++;
-        items.push(...thisInstanceItems);
-      }
-    }
+    //   const adapterInstance = new adapter();
+    //   const thisInstanceItems = await adapterInstance.parse({
+    //     config,
+    //     colorIndex,
+    //     fileName: fileNameFullPath,
+    //   });
+
+    //   if (thisInstanceItems.length > 0) {
+    //     colorIndex++;
+    //     items.push(...thisInstanceItems);
+    //   }
+    // }
 
     // Parse user commands
     const userItems = await new UserCommandsAdapter().parse({

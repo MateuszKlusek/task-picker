@@ -26,11 +26,9 @@ export class TaskfileAdapter extends FileAdapterAbstract {
   async parse({
     config,
     colorIndex,
-    fileName,
   }: {
     config?: Config;
     colorIndex: number;
-    fileName: string;
   }): Promise<SelectionItem[]> {
     try {
       const yamlContent = fs.readFileSync(fileName, "utf-8");
