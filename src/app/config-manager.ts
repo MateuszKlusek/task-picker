@@ -93,14 +93,6 @@ export class ConfigManager {
         this.config.userCommands = [];
       }
 
-      if (!this.config.filesSearchInclude) {
-        this.config.filesSearchInclude = [
-          "package.json",
-          "Taskfile.yaml",
-          "Taskfile.yml",
-        ];
-      }
-
       log.debug(`Config loaded: ${JSON.stringify(this.config, null, 2)}`);
     } catch (error) {
       throw new Error(`Error loading config: ${error}`);

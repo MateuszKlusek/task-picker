@@ -18,6 +18,7 @@ export class UserCommandsAdapter extends FileAdapterAbstract {
         workDir: userCmd.workDir || "./",
         subcommand: "",
         color: COLORS_ROTATION[colorIndex % COLORS_ROTATION.length],
+        absolutePath: "",
       });
     }
 

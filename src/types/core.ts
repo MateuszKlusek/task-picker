@@ -17,7 +17,6 @@ export interface SelectionItem {
 export interface Config {
   root?: string;
   userCommands?: UserCommand[];
-  filesSearchInclude?: string[];
   shell?: string;
   patternExec?: PatternExec[];
 }
