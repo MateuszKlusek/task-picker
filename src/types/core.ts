@@ -19,6 +19,7 @@ export interface Config {
   userCommands?: UserCommand[];
   shell?: string;
   patternExec?: PatternExec[];
+  packageJsonExec?: PatternExec;
 }
 
 export interface PatternExec {

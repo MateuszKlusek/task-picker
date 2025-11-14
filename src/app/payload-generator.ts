@@ -1,4 +1,4 @@
-import { SelectionItem } from "../types/core";
+import { COLORS_ROTATION, SelectionItem } from "../types/core";
 import { log } from "../utils/logger";
 import { ConfigManager } from "./config-manager";
 
@@ -14,16 +14,23 @@ export class PayloadGenerator {
     const usableGenerators = await configManager.getUsableGenerators();
     console.log("usableGenerators", usableGenerators);
 
-    const items = await Promise.all(
+    const itemsWithoutColors = await Promise.all(
       Object.entries(usableGenerators).map(async ([_, generator]) => {
-        const g = new generator();
-        const thisInstanceItems = await g.parse({
+        const thisInstanceItems = await new generator().parse({
           config,
           colorIndex,
         });
         return thisInstanceItems;
       })
     );
+    const items = itemsWithoutColors
+      .map((item) => {
+        return {
+          ...item,
+          color: COLORS_ROTATION[+colorIndex % COLORS_ROTATION.length],
+        };
+      })
+      .flat();
 
     log.debug(`Generated ${items.length} selection items`);
     return items;

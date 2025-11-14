@@ -1,8 +1,8 @@
+import { glob } from "fast-glob";
 import * as fs from "fs";
 import path from "path";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
 import { COLORS_ROTATION, Config, SelectionItem } from "../types/core";
-import { glob } from "fast-glob";
 
 export interface PackageJson {
   scripts?: Record<string, string>;
@@ -16,13 +16,16 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
     config?: Config;
     colorIndex: number;
   }): Promise<SelectionItem[]> {
-    try {
-      const fileName = "package.json";
+    if (!config?.packageJsonExec?.include) {
+      return [];
+    }
 
-      const files = await glob(fileName, {
+    try {
+      const files = await glob(config?.packageJsonExec?.include, {
         absolute: true,
         onlyFiles: true,
       });
+      console.log("files ", files);
 
       const jsonContent = fs.readFileSync(fileName, "utf-8");
       const packageJson: PackageJson = JSON.parse(jsonContent);
