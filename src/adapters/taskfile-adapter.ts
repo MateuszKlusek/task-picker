@@ -1,6 +1,11 @@
 import * as fs from "fs";
 import * as yaml from "js-yaml";
-import { COLORS_ROTATION, Config, SelectionItem } from "../types/core";
+import {
+  COLORS_ROTATION,
+  Config,
+  SelectionItem,
+  SingleAdapterOutput,
+} from "../types/core";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
 
 // https://taskfile.dev/docs/guide#task
@@ -23,13 +28,7 @@ export interface Taskfile {
 }
 
 export class TaskfileAdapter extends FileAdapterAbstract {
-  async parse({
-    config,
-    colorIndex,
-  }: {
-    config?: Config;
-    colorIndex: number;
-  }): Promise<SelectionItem[]> {
+  async parse({ config }: { config?: Config }): Promise<SingleAdapterOutput> {
     try {
       const yamlContent = fs.readFileSync(fileName, "utf-8");
       const taskfile: Taskfile = yaml.load(yamlContent) as Taskfile;
@@ -51,7 +50,7 @@ export class TaskfileAdapter extends FileAdapterAbstract {
             label,
             subcommand: "",
             workDir: "./",
-            color: COLORS_ROTATION[colorIndex % COLORS_ROTATION.length],
+            absolutePath: "",
           });
         }
       }

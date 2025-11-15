@@ -14,9 +14,11 @@ export interface SelectionItem {
   color?: Colors;
 }
 
+export type SingleAdapterOutput = SelectionItem[] | SelectionItem[][];
+
 export interface Config {
   root?: string;
-  userCommands?: UserCommand[];
+  userCommandsExec?: UserCommand[];
   shell?: string;
   patternExec?: PatternExec[];
   packageJsonExec?: PatternExec;

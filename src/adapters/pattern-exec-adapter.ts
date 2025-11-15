@@ -1,15 +1,9 @@
 import { glob } from "fast-glob";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
-import { Config, SelectionItem } from "../types/core";
+import { Config, SelectionItem, SingleAdapterOutput } from "../types/core";
 
 export class PatternExecAdapter extends FileAdapterAbstract {
-  async parse({
-    config,
-    colorIndex,
-  }: {
-    config?: Config;
-    colorIndex: number;
-  }): Promise<SelectionItem[]> {
+  async parse({ config }: { config?: Config }): Promise<SingleAdapterOutput> {
     const items: SelectionItem[] = [];
 
     if (!config?.patternExec || config?.patternExec?.length === 0) {
@@ -33,8 +27,6 @@ export class PatternExecAdapter extends FileAdapterAbstract {
             workDir: "./",
           });
         }
-
-        console.log(files);
       } catch (error) {
         console.error(`Error finding files: ${error}`);
       }

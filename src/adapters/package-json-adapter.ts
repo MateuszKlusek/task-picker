@@ -1,54 +1,51 @@
-import { glob } from "fast-glob";
 import * as fs from "fs";
 import path from "path";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
-import { COLORS_ROTATION, Config, SelectionItem } from "../types/core";
+import { Config, SelectionItem, SingleAdapterOutput } from "../types/core";
+import { FileUtils } from "../utils/fileUtils";
 
 export interface PackageJson {
   scripts?: Record<string, string>;
 }
 
 export class PackageJsonAdapter extends FileAdapterAbstract {
-  async parse({
-    config,
-    colorIndex,
-  }: {
-    config?: Config;
-    colorIndex: number;
-  }): Promise<SelectionItem[]> {
-    if (!config?.packageJsonExec?.include) {
-      return [];
-    }
-
+  async parse({ config }: { config?: Config }): Promise<SingleAdapterOutput> {
     try {
-      const files = await glob(config?.packageJsonExec?.include, {
-        absolute: true,
-        onlyFiles: true,
+      const files = await FileUtils.findFiles({
+        include: config?.packageJsonExec?.include,
+        exclude: config?.packageJsonExec?.exclude,
       });
-      console.log("files ", files);
 
-      const jsonContent = fs.readFileSync(fileName, "utf-8");
-      const packageJson: PackageJson = JSON.parse(jsonContent);
+      const items = await Promise.all(
+        files.map(async (fileName) => {
+          try {
+            const jsonContent = await fs.promises.readFile(fileName, "utf-8");
+            const packageJson: PackageJson = JSON.parse(jsonContent);
 
-      const items: SelectionItem[] = [];
-
-      if (packageJson.scripts) {
-        for (const [name, cmd] of Object.entries(packageJson.scripts)) {
-          items.push({
-            executableCommand: `npm run ${name}`,
-            label: name,
-            subcommand: cmd,
-            absolutePath: path.dirname(fileName),
-            workDir: "./",
-            color: COLORS_ROTATION[colorIndex % COLORS_ROTATION.length],
-          });
-        }
-      }
-
-      return items;
+            if (packageJson.scripts) {
+              const tempItems: SelectionItem[] = [];
+              for (const [name, cmd] of Object.entries(packageJson.scripts)) {
+                tempItems.push({
+                  executableCommand: `npm run ${name}`,
+                  label: name,
+                  subcommand: cmd,
+                  absolutePath: path.dirname(fileName),
+                  workDir: "./",
+                });
+              }
+              return tempItems;
+            }
+            return [];
+          } catch (error) {
+            console.error(`Error parsing ${fileName}: ${error}`);
+            return [];
+          }
+        })
+      );
+      return Promise.resolve(items);
     } catch (error) {
       console.error(`Error parsing package.json: ${error}`);
-      return [];
+      return Promise.resolve([]);
     }
   }
 }

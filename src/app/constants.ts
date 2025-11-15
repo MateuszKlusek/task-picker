@@ -4,7 +4,7 @@ import { UserCommandsAdapter } from "../adapters/user-commands-adapter";
 import { FileAdapterAbstract } from "./adapter.abstract";
 
 export const GENERATOR_MAP: Record<string, new () => FileAdapterAbstract> = {
-  packageJson: PackageJsonAdapter,
+  packageJsonExec: PackageJsonAdapter,
   patternExec: PatternExecAdapter,
-  userCommands: UserCommandsAdapter,
+  userCommandsExec: UserCommandsAdapter,
 };

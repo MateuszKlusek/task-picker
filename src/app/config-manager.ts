@@ -64,7 +64,7 @@ export class ConfigManager {
 
   public async getConfigFile(): Promise<Config> {
     const configPath = path.join(this.cwd, this.configFileName);
-    log.info(`Getting config file from: ${configPath}`);
+    log.debug(`Getting config file from: ${configPath}`);
 
     if (!FileUtils.fileExists(configPath)) {
       throw new Error(`Configuration file not found: ${configPath}`);
@@ -84,14 +84,7 @@ export class ConfigManager {
       const config = await this.getConfigFile();
       this.config = config;
 
-      // Set defaults
-      if (!this.config.root) {
-        this.config.root = this.cwd;
-      }
-
-      if (!this.config.userCommands) {
-        this.config.userCommands = [];
-      }
+      // how about defaults ??
 
       log.debug(`Config loaded: ${JSON.stringify(this.config, null, 2)}`);
     } catch (error) {

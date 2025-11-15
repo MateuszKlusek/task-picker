@@ -3,26 +3,24 @@ import { glob } from "fast-glob";
 import * as fs from "fs";
 
 export class FileUtils {
-  static async findFiles(
-    searchDir: string,
-    patterns: string[]
-  ): Promise<string[]> {
-    const foundFiles: string[] = [];
-
-    for (const pattern of patterns) {
-      try {
-        const files = await glob(`**/${pattern}`, {
-          cwd: searchDir,
-          absolute: true,
-          onlyFiles: true,
-        });
-        foundFiles.push(...files);
-      } catch (error) {
-        // Pattern not found, continue
-      }
+  static async findFiles({
+    include,
+    exclude = [],
+  }: {
+    include?: string | string[];
+    exclude?: string | string[];
+  }): Promise<string[]> {
+    if (!include) {
+      return [];
     }
 
-    return foundFiles;
+    const excludePatterns = Array.isArray(exclude) ? exclude : [exclude];
+
+    return await glob(include, {
+      absolute: true,
+      onlyFiles: true,
+      ignore: excludePatterns,
+    });
   }
 
   static generateChecksum(filePath: string): string {

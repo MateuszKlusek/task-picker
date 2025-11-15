@@ -1,11 +1,5 @@
-import { Config, SelectionItem } from "../types/core";
+import { Config, SingleAdapterOutput } from "../types/core";
 
 export abstract class FileAdapterAbstract {
-  abstract parse({
-    config,
-    colorIndex,
-  }: {
-    config?: Config;
-    colorIndex: number;
-  }): Promise<SelectionItem[]>;
+  abstract parse({ config }: { config?: Config }): Promise<SingleAdapterOutput>;
 }

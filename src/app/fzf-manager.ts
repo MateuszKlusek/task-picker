@@ -30,7 +30,6 @@ export class FzfManager {
         "--preview=echo label: {1} ; echo subcommand: {2} ;echo executableCommand: {3} ; echo executable directory: {4} ; echo absolute path: {5}",
         "--preview-window=wrap",
         "--ansi",
-        "--height=50%",
       ],
       {
         stdio: ["pipe", "pipe", "inherit"],

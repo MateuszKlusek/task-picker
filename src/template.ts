@@ -3,24 +3,22 @@
 
 export const EMBEDDED_TEMPLATE = `shell: /bin/zsh
 
-filesSearchInclude:
-  - package.json
-  - Taskfile.yaml
-  - Taskfile.yml
-
-userCommands:
+userCommandsExec:
   - command: ls
     workDir: ./
     label: list files
     runner: ''
-  - command: run test  
+  - command: run test
     workDir: ./
     label: run test
-    runner: 'npx'
+    runner: npx
 
+packageJsonExec:
+    include: ./**/package.json
+    exclude: node_modules
+    
 patternExec:
-  - include: "./src/**/*.ts"
-    exclude: "**/*.test.ts"
-    runner: 'npx tsx'
-    label: run ts file in src
-`;
+  - include: ./src/**/*.ts
+    exclude: '**/*.test.ts'
+    runner: npx tsx
+    label: run ts file in src`;
