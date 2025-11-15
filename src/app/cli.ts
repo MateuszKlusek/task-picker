@@ -44,12 +44,21 @@ export class CLI {
         this.didRun = true;
         this.updateRoot();
       });
+
     this.program
       .command("version")
       .description("Show version information")
       .action(() => {
         this.didRun = true;
         this.showVersion();
+      });
+
+    this.program
+      .command("validate")
+      .description("Validate the configuration")
+      .action(async () => {
+        this.didRun = true;
+        await this.configManager.validateConfig();
       });
 
     this.program
@@ -85,7 +94,6 @@ export class CLI {
   }
 
   private updateRoot(): void {
-    this.didRun = true;
     const cwd = process.cwd();
     this.configManager.upsertConfigKey("root", cwd);
     log.info(`Updating root directory to: ${cwd}`);
