@@ -16,14 +16,6 @@ export interface SelectionItem {
 
 export type SingleAdapterOutput = SelectionItem[] | SelectionItem[][];
 
-export interface Config {
-  root?: string;
-  userCommandsExec?: UserCommand[];
-  shell?: string;
-  patternExec?: PatternExec[];
-  packageJsonExec?: PatternExec;
-}
-
 export interface PatternExec {
   include: string;
   exclude?: string;
@@ -31,7 +23,13 @@ export interface PatternExec {
   runner: string;
 }
 
-export type LogLevel = "debug" | "info" | "warn" | "error";
+export interface Config {
+  root?: string;
+  userCommandsExec?: UserCommand[];
+  shell?: string;
+  patternExec?: PatternExec[];
+  packageJsonExec?: PatternExec;
+}
 
 export interface CLIArgs {
   help: boolean;
@@ -42,24 +40,7 @@ export interface CLIArgs {
   logLevel: LogLevel;
 }
 
-export interface PackageJson {
-  scripts?: Record<string, string>;
-}
-
-export interface ChecksumEntry {
-  path: string;
-  checksum: string;
-  algorithm: string;
-  lastModified: string;
-  fileSize: number;
-  status: string;
-}
-
-export interface ChecksumsFile {
-  version: string;
-  lastUpdated: string;
-  files: ChecksumEntry[];
-}
+export type LogLevel = "debug" | "info" | "warn" | "error";
 
 // -------------------------- colors -------------------------- //
 
@@ -83,3 +64,20 @@ export const COLORS_ROTATION: Colors[] = [
   Colors.CYAN,
   Colors.WHITE,
 ];
+
+// -------------------------- temp sunset -------------------------- //
+
+export interface ChecksumEntry {
+  path: string;
+  checksum: string;
+  algorithm: string;
+  lastModified: string;
+  fileSize: number;
+  status: string;
+}
+
+export interface ChecksumsFile {
+  version: string;
+  lastUpdated: string;
+  files: ChecksumEntry[];
+}
