@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import { Colors, SelectionItem } from "../types/core";
 import { log } from "../utils/logger";
 
-export class FzfManager {
+export class FzfRunner {
   static async run(items: SelectionItem[]): Promise<void> {
     if (items.length === 0) {
       log.warn(

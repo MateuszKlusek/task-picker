@@ -2,11 +2,11 @@
 
 import { CLI } from "./app/cli";
 import { ConfigManager } from "./app/config-manager";
-import { FzfManager } from "./app/fzf-manager";
+import { FzfRunner } from "./app/fzf-runner";
 import { PayloadGenerator } from "./app/payload-generator";
 import { log } from "./utils/logger";
 
-async function main(): Promise<void> {
+const main = async (): Promise<void> => {
   const configManager = new ConfigManager();
   const cli = new CLI({ configManager });
 
@@ -14,13 +14,13 @@ async function main(): Promise<void> {
     try {
       await configManager.loadConfig();
       const payload = await PayloadGenerator.generate({ configManager });
-      await FzfManager.run(payload);
+      await FzfRunner.run(payload);
     } catch (error) {
       log.error(error as string);
       process.exit(1);
     }
   }
-}
+};
 
 main().catch((error) => {
   log.error(`Unhandled error:, ${error}`);

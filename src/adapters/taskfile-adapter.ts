@@ -7,6 +7,7 @@ import {
   SingleAdapterOutput,
 } from "../types/core";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
+import { FileUtils } from "../utils/fileUtils";
 
 // https://taskfile.dev/docs/guide#task
 
@@ -30,7 +31,7 @@ export interface Taskfile {
 export class TaskfileAdapter extends FileAdapterAbstract {
   async parse({ config }: { config?: Config }): Promise<SingleAdapterOutput> {
     try {
-      const yamlContent = fs.readFileSync(fileName, "utf-8");
+      const yamlContent = FileUtils.readFile(config?.taskfileExec?.include);
       const taskfile: Taskfile = yaml.load(yamlContent) as Taskfile;
 
       const items: SelectionItem[] = [];

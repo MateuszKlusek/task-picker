@@ -63,15 +63,14 @@ export class ConfigManager {
   }
 
   public async getConfigFile(): Promise<Config> {
-    const configPath = path.join(this.cwd, this.configFileName);
-    log.debug(`Getting config file from: ${configPath}`);
+    log.debug(`Getting config file from: ${this.configPath}`);
 
-    if (!FileUtils.fileExists(configPath)) {
-      throw new Error(`Configuration file not found: ${configPath}`);
+    if (!FileUtils.fileExists(this.configPath)) {
+      throw new Error(`Configuration file not found: ${this.configPath}`);
     }
 
     try {
-      const yamlContent = FileUtils.readFile(configPath);
+      const yamlContent = FileUtils.readFile(this.configPath);
       const config = yaml.load(yamlContent) as Config;
       return config;
     } catch (error) {
@@ -92,27 +91,13 @@ export class ConfigManager {
     }
   }
 
-  public getConfig() {
-    if (!this.config) {
-      throw new Error("Config not loaded");
-    }
-    return this.config;
-  }
-
-  public logConfig(): void {
-    if (this.config) {
-      log.debug(`Config: ${JSON.stringify(this.config, null, 2)}`);
-    }
-  }
-
   async initializeConfig(
     override: boolean = false,
     templateOverride: any = {}
   ): Promise<void> {
-    log.debug(`InitializeConfig: ${override}`);
-    const configPath = path.join(process.cwd(), this.configFileName);
+    log.debug(`Override flag: ${override}`);
 
-    if (FileUtils.fileExists(configPath) && !override) {
+    if (FileUtils.fileExists(this.configPath) && !override) {
       log.info(`${this.configFileName} already exists`);
       log.info("Use --override flag to overwrite existing configuration");
       return;
@@ -161,7 +146,7 @@ export class ConfigManager {
     };
 
     console.log("finalConfig", finalConfig);
-    console.log("configPath", configPath);
+    console.log("this.configPath", this.configPath);
 
     await this.saveConfigFile(finalConfig);
 
@@ -177,6 +162,19 @@ export class ConfigManager {
     } catch (error) {
       log.error(`Configuration validation failed: ${error}`);
       return false;
+    }
+  }
+
+  public getConfig() {
+    if (!this.config) {
+      throw new Error("Config not loaded");
+    }
+    return this.config;
+  }
+
+  public logConfig(): void {
+    if (this.config) {
+      log.debug(`Config: ${JSON.stringify(this.config, null, 2)}`);
     }
   }
 }

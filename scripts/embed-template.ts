@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 /**
- * Embed the template into the build process, becuase it's faster then reading from the file system
+ * Embed the template into the build process, becuase it's faster then reading from the file system in runtime
  */
 
 const templatePath = path.join(
@@ -20,6 +20,7 @@ export const EMBEDDED_TEMPLATE = \`${templateContent}\`;
 `;
 
 const outputPath = path.join(__dirname, "../src/template.ts");
+
 fs.writeFileSync(outputPath, embeddedTemplate);
 
 console.log("[INFO] Embedded template into src/template.ts");
