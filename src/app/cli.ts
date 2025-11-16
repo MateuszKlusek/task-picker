@@ -21,6 +21,7 @@ export class CLI {
     this.program.parse();
   }
 
+  @Timed("CLI.setupCommands")
   private setupCommands(): void {
     this.program
       .name("task-picker")
@@ -82,6 +83,7 @@ export class CLI {
     });
   }
 
+  @Timed("CLI.showUsage")
   private showUsage(): void {
     this.program.help();
   }

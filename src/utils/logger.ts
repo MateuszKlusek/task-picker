@@ -11,6 +11,7 @@ class Logger {
   }
 
   setLogLevel(logLevel: LogLevel): void {
+    console.log("setLogLevel", logLevel);
     this.logLevel = logLevel;
   }
 
@@ -22,6 +23,7 @@ class Logger {
     }
   }
 
+  // don't set this level in LogLevelList, it's tied to debug level
   timed(message: string | object): void {
     if (this.isLogLevelEnabled("debug")) {
       console.log(

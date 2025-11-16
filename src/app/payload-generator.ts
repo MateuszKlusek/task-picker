@@ -5,9 +5,11 @@ import {
   SingleAdapterOutput,
 } from "../types/core";
 import { log } from "../utils/logger";
+import { Timed } from "../utils/timer";
 import { ConfigManager } from "./config-manager";
 
 export class PayloadGenerator {
+  @Timed("PayloadGenerator.generate")
   static async generate({
     configManager,
   }: {
@@ -29,6 +31,7 @@ export class PayloadGenerator {
     return flattenedItems;
   }
 
+  @Timed("PayloadGenerator.flattenAndAssignColors")
   private static flattenAndAssignColors(
     items: Array<SingleAdapterOutput>
   ): SelectionItem[] {
@@ -55,6 +58,7 @@ export class PayloadGenerator {
     return result;
   }
 
+  // @Timed("PayloadGenerator.pickColor")
   private static pickColor(colorIndex: number): Colors {
     return COLORS_ROTATION[colorIndex % COLORS_ROTATION.length];
   }

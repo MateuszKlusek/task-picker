@@ -21,6 +21,7 @@ export class ConfigManager {
     this.configPath = path.join(this.cwd, this.configFileName);
   }
 
+  @Timed("ConfigManager.upsertConfigKey")
   public async upsertConfigKey<K extends keyof Config>(
     key: K,
     value: Config[K]
@@ -30,6 +31,7 @@ export class ConfigManager {
     await this.saveConfigFile(config);
   }
 
+  @Timed("ConfigManager.getUsableGenerators")
   public async getUsableGenerators() {
     const generators: Record<string, new () => FileAdapterAbstract> = {};
     if (!this.config) {
@@ -45,6 +47,7 @@ export class ConfigManager {
     return generators;
   }
 
+  @Timed("ConfigManager.saveConfigFile")
   public async saveConfigFile(config: Config): Promise<void> {
     try {
       const yamlContent = yaml.dump(config, {
@@ -63,6 +66,7 @@ export class ConfigManager {
     }
   }
 
+  @Timed("ConfigManager.getConfigFile")
   public async getConfigFile(): Promise<Config> {
     log.debug(`Getting config file from: ${this.configPath}`);
 
@@ -79,6 +83,7 @@ export class ConfigManager {
     }
   }
 
+  @Timed("ConfigManager.loadConfig")
   async loadConfig() {
     try {
       const config = await this.getConfigFile();
@@ -92,6 +97,7 @@ export class ConfigManager {
     }
   }
 
+  @Timed("ConfigManager.initializeConfig")
   async initializeConfig(
     override: boolean = false,
     templateOverride: any = {}
@@ -155,7 +161,7 @@ export class ConfigManager {
     log.info("You can now edit this file to add your task definitions.");
   }
 
-  @Timed("validateConfig")
+  @Timed("ConfigManager.validateConfig")
   public async validateConfig(): Promise<boolean> {
     try {
       await this.loadConfig();
@@ -168,7 +174,7 @@ export class ConfigManager {
     }
   }
 
-  @Timed("getConfig")
+  @Timed("ConfigManager.getConfig")
   public getConfig() {
     if (!this.config) {
       throw new Error("Config not loaded");

@@ -77,6 +77,7 @@ export class FzfRunner {
     });
   }
 
+  @Timed("FzfRunner.executeSelection")
   private static executeSelection(selected: string): void {
     const parts = selected.split("\t");
     if (parts.length < 2) {
