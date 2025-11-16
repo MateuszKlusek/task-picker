@@ -3,6 +3,7 @@ import path from "path";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
 import { Config, SelectionItem, SingleAdapterOutput } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
+import { log } from "../utils/logger";
 
 export interface PackageJson {
   scripts?: Record<string, string>;
@@ -22,7 +23,7 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
             const jsonContent = await fs.promises.readFile(fileName, "utf-8");
             const packageJson: PackageJson = JSON.parse(jsonContent);
             const fileDir = path.dirname(fileName);
-            console.log({ fileDir, fileName });
+            log.debug({ fileDir, fileName });
 
             if (packageJson.scripts) {
               const tempItems: SelectionItem[] = [];

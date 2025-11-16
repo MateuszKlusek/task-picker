@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+import { log } from "../src/utils/logger";
 
 /**
  * Embed the template into the build process, becuase it's faster then reading from the file system in runtime
@@ -23,4 +24,4 @@ const outputPath = path.join(__dirname, "../src/template.ts");
 
 fs.writeFileSync(outputPath, embeddedTemplate);
 
-console.log("[INFO] Embedded template into src/template.ts");
+log.info("Embedded template into src/template.ts");

@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { log } from "../utils/logger";
+import { Timed } from "../utils/timer";
 import { ConfigManager } from "./config-manager";
 
 export class CLI {
@@ -14,7 +15,7 @@ export class CLI {
 
     this.program.hook("preAction", () => {
       const options = this.program.opts();
-      log.setLogLevel(options.logLevel);
+      log.setLogLevel(options?.logLevel);
     });
 
     this.program.parse();
@@ -85,6 +86,7 @@ export class CLI {
     this.program.help();
   }
 
+  @Timed("CLI.showVersion")
   private showVersion(): void {
     console.log("task-picker version 0.1.0");
   }
@@ -93,6 +95,7 @@ export class CLI {
     return this.didRun;
   }
 
+  @Timed("CLI.updateRoot")
   private updateRoot(): void {
     const cwd = process.cwd();
     this.configManager.upsertConfigKey("root", cwd);
