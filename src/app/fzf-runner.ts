@@ -1,8 +1,10 @@
 import { spawn } from "child_process";
 import { Colors, SelectionItem } from "../types/core";
 import { log } from "../utils/logger";
+import { Timed } from "../utils/timer";
 
 export class FzfRunner {
+  @Timed("FzfRunner.run")
   static async run(items: SelectionItem[]): Promise<void> {
     if (items.length === 0) {
       log.info("No tasks found.");
@@ -28,6 +30,7 @@ export class FzfRunner {
         "--preview=echo label: {1} ; echo subcommand: {2} ;echo executableCommand: {3} ; echo executable directory: {4} ; echo absolute path: {5}",
         "--preview-window=wrap",
         "--ansi",
+        "--height=50%",
       ],
       {
         stdio: ["pipe", "pipe", "inherit"],
@@ -60,6 +63,7 @@ export class FzfRunner {
     });
   }
 
+  @Timed("FzfRunner.checkFzfAvailable")
   private static async checkFzfAvailable(): Promise<void> {
     return new Promise((resolve, reject) => {
       const checkProcess = spawn("which", ["fzf"], { stdio: "ignore" });

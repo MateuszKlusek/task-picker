@@ -14,6 +14,7 @@ const main = async (): Promise<void> => {
     try {
       await configManager.loadConfig();
       const payload = await PayloadGenerator.generate({ configManager });
+
       await FzfRunner.run(payload);
     } catch (error) {
       log.error(error as string);

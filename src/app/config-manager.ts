@@ -5,6 +5,7 @@ import { EMBEDDED_TEMPLATE } from "../template";
 import { Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
+import { Timed } from "../utils/timer";
 import { FileAdapterAbstract } from "./adapter.abstract";
 import { GENERATOR_MAP } from "./constants";
 
@@ -154,6 +155,7 @@ export class ConfigManager {
     log.info("You can now edit this file to add your task definitions.");
   }
 
+  @Timed("validateConfig")
   public async validateConfig(): Promise<boolean> {
     try {
       await this.loadConfig();
@@ -166,6 +168,7 @@ export class ConfigManager {
     }
   }
 
+  @Timed("getConfig")
   public getConfig() {
     if (!this.config) {
       throw new Error("Config not loaded");

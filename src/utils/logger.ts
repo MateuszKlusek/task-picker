@@ -22,6 +22,14 @@ class Logger {
     }
   }
 
+  timed(message: string | object): void {
+    if (this.isLogLevelEnabled("debug")) {
+      console.log(
+        `${Colors.YELLOW}[TIMED]${Colors.RESET} ${this.formatMessage(message)}`
+      );
+    }
+  }
+
   info(message: string | object): void {
     if (this.isLogLevelEnabled("info")) {
       console.log(
