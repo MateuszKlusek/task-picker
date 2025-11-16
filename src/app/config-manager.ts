@@ -2,7 +2,7 @@ import fs from "fs";
 import * as yaml from "js-yaml";
 import * as path from "path";
 import { EMBEDDED_TEMPLATE } from "../template";
-import { Config } from "../types/core";
+import { type Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
 import { Timed } from "../utils/timer";

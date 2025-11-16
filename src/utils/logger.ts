@@ -11,7 +11,6 @@ class Logger {
   }
 
   public setLogLevel(logLevel: LogLevel): void {
-    console.log("setLogLevel", logLevel);
     this.logLevel = logLevel;
   }
 

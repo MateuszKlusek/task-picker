@@ -11,17 +11,6 @@ export class FzfRunner {
       return;
     }
 
-    // Check if fzf is available
-    try {
-      await this.checkFzfAvailable();
-    } catch (error) {
-      log.error("fzf is not installed. Please install fzf to use this tool.");
-      log.info(
-        "Installation instructions: https://github.com/junegunn/fzf#installation"
-      );
-      process.exit(1);
-    }
-
     const fzfProcess = spawn(
       "fzf",
       [
@@ -59,21 +48,15 @@ export class FzfRunner {
     });
 
     fzfProcess.on("error", (error) => {
-      log.error(`Error running fzf: ${error}`);
-    });
-  }
+      if (error.message.includes("ENOENT")) {
+        log.error("fzf is not installed. Please install fzf to use this tool.");
+        log.info(
+          "Installation instructions: https://github.com/junegunn/fzf#installation"
+        );
+        process.exit(1);
+      }
 
-  @Timed("FzfRunner.checkFzfAvailable")
-  private static async checkFzfAvailable(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const checkProcess = spawn("which", ["fzf"], { stdio: "ignore" });
-      checkProcess.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject(new Error("fzf not found"));
-        }
-      });
+      log.error(`Error running fzf: ${error}`);
     });
   }
 
