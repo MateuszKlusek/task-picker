@@ -21,16 +21,18 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
           try {
             const jsonContent = await fs.promises.readFile(fileName, "utf-8");
             const packageJson: PackageJson = JSON.parse(jsonContent);
+            const fileDir = path.dirname(fileName);
+            console.log({ fileDir, fileName });
 
             if (packageJson.scripts) {
               const tempItems: SelectionItem[] = [];
               for (const [name, cmd] of Object.entries(packageJson.scripts)) {
                 tempItems.push({
-                  executableCommand: `npm run ${name}`,
+                  executableCommand: `${config?.packageJsonExec?.runner} ${name}`,
                   label: name,
                   subcommand: cmd,
                   absolutePath: path.dirname(fileName),
-                  workDir: "./",
+                  workDir: fileDir,
                 });
               }
               return tempItems;
@@ -42,10 +44,10 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
           }
         })
       );
-      return Promise.resolve(items);
+      return items;
     } catch (error) {
       console.error(`Error parsing package.json: ${error}`);
-      return Promise.resolve([]);
+      return [];
     }
   }
 }

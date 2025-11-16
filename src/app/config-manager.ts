@@ -157,6 +157,7 @@ export class ConfigManager {
   public async validateConfig(): Promise<boolean> {
     try {
       await this.loadConfig();
+
       log.info("Configuration is valid");
       return true;
     } catch (error) {

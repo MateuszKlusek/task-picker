@@ -86,7 +86,7 @@ export class CLI {
   }
 
   private showVersion(): void {
-    console.log("task-picker version 1.0.0");
+    console.log("task-picker version 0.1.0");
   }
 
   public getDidRun(): boolean {

@@ -5,9 +5,7 @@ import { log } from "../utils/logger";
 export class FzfRunner {
   static async run(items: SelectionItem[]): Promise<void> {
     if (items.length === 0) {
-      log.warn(
-        'No tasks found. Run "task-picker init" to create a configuration file.'
-      );
+      log.info("No tasks found.");
       return;
     }
 

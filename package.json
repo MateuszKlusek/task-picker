@@ -1,6 +1,6 @@
 {
   "name": "task-picker",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Interactive task picker tool with fzf integration",
   "main": "dist/index.js",
   "bin": {
