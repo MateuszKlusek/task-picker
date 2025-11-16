@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import { log } from "../src/utils/logger";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Embed the template into the build process, becuase it's faster then reading from the file system in runtime

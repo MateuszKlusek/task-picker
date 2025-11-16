@@ -1,4 +1,4 @@
-import { glob } from "fast-glob";
+import fastGlob from "fast-glob";
 import { FileAdapterAbstract } from "../app/adapter.abstract";
 import { Config, SelectionItem, SingleAdapterOutput } from "../types/core";
 
@@ -12,7 +12,7 @@ export class PatternExecAdapter extends FileAdapterAbstract {
 
     for (const pattern of config.patternExec) {
       try {
-        const files = await glob(pattern.include, {
+        const files = await fastGlob.glob(pattern.include, {
           absolute: true,
           onlyFiles: true,
           ignore: pattern.exclude ? [pattern.exclude] : [],

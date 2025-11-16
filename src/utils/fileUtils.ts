@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { glob } from "fast-glob";
+import fastGlob from "fast-glob";
 import * as fs from "fs";
 
 export class FileUtils {
@@ -16,7 +16,7 @@ export class FileUtils {
 
     const excludePatterns = Array.isArray(exclude) ? exclude : [exclude];
 
-    return await glob(include, {
+    return await fastGlob.glob(include, {
       absolute: true,
       onlyFiles: true,
       ignore: excludePatterns,
