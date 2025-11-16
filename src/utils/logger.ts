@@ -10,12 +10,12 @@ class Logger {
     this.logLevel = logLevel;
   }
 
-  setLogLevel(logLevel: LogLevel): void {
+  public setLogLevel(logLevel: LogLevel): void {
     console.log("setLogLevel", logLevel);
     this.logLevel = logLevel;
   }
 
-  debug(message: string | object): void {
+  public debug(message: string | object): void {
     if (this.isLogLevelEnabled("debug")) {
       console.log(
         `${Colors.BLUE}[DEBUG]${Colors.RESET} ${this.formatMessage(message)}`
@@ -24,7 +24,7 @@ class Logger {
   }
 
   // don't set this level in LogLevelList, it's tied to debug level
-  timed(message: string | object): void {
+  public timed(message: string | object): void {
     if (this.isLogLevelEnabled("debug")) {
       console.log(
         `${Colors.YELLOW}[TIMED]${Colors.RESET} ${this.formatMessage(message)}`
@@ -32,7 +32,7 @@ class Logger {
     }
   }
 
-  info(message: string | object): void {
+  public info(message: string | object): void {
     if (this.isLogLevelEnabled("info")) {
       console.log(
         `${Colors.GREEN}[INFO]${Colors.RESET} ${this.formatMessage(message)}`
@@ -40,7 +40,7 @@ class Logger {
     }
   }
 
-  warn(message: string | object): void {
+  public warn(message: string | object): void {
     if (this.isLogLevelEnabled("warn")) {
       console.warn(
         `${Colors.YELLOW}[WARN]${Colors.RESET} ${this.formatMessage(message)}`
@@ -48,7 +48,7 @@ class Logger {
     }
   }
 
-  error(message: string | object): void {
+  public error(message: string | object): void {
     if (this.isLogLevelEnabled("error")) {
       console.error(
         `${Colors.RED}[ERROR]${Colors.RESET} ${this.formatMessage(message)}`
@@ -62,7 +62,7 @@ class Logger {
     );
   }
 
-  getLogLevel(): LogLevel {
+  public getLogLevel(): LogLevel {
     return this.logLevel;
   }
 
