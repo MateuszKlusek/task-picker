@@ -1,15 +1,24 @@
 import { spawn } from "child_process";
-import { Colors, SelectionItem } from "../types/core";
+import { Colors, Config, SelectionItem } from "../types/core";
 import { log } from "../utils/logger";
 import { Timed } from "../utils/timer";
+import { ConfigManager } from "./config-manager";
 
 export class FzfRunner {
   @Timed("FzfRunner.run")
-  static async run(items: SelectionItem[]): Promise<void> {
+  static async run({
+    items,
+    configManager,
+  }: {
+    items: SelectionItem[];
+    configManager: ConfigManager;
+  }): Promise<void> {
     if (items.length === 0) {
       log.info("No tasks found.");
       return;
     }
+
+    const config = configManager.getConfig();
 
     const fzfProcess = spawn(
       "fzf",
@@ -41,7 +50,7 @@ export class FzfRunner {
 
     fzfProcess.on("close", (code) => {
       if (code === 0 && selectedData.trim()) {
-        this.executeSelection(selectedData.trim());
+        this.executeSelection({ selected: selectedData.trim(), config });
       } else {
         log.info("No selection made");
       }
@@ -61,7 +70,13 @@ export class FzfRunner {
   }
 
   @Timed("FzfRunner.executeSelection")
-  private static executeSelection(selected: string): void {
+  private static executeSelection({
+    selected,
+    config,
+  }: {
+    selected: string;
+    config: Config;
+  }): void {
     const parts = selected.split("\t");
     if (parts.length < 2) {
       log.error(`Unexpected selection format: ${selected}`);
@@ -88,7 +103,7 @@ export class FzfRunner {
     console.log(`${Colors.GREEN}❯ ${cleanCommand}${Colors.RESET}`);
 
     // Use the specified shell or default
-    const shell = process.env.SHELL || "/bin/bash";
+    const shell = config?.shell || process.env.SHELL || "/bin/bash";
 
     // needed for colors in the terminal
     process.env.CLICOLOR = "1";
