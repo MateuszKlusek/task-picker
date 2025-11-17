@@ -11,7 +11,7 @@ import { FileUtils } from "../utils/fileUtils";
 
 // https://taskfile.dev/docs/guide#task
 
-export interface Task {
+export type Task = {
   desc?: string;
   cmds?: string[];
   vars?: Record<string, string | number | boolean>;
@@ -20,13 +20,13 @@ export interface Task {
   ignoreError?: boolean;
   preconditions?: string[];
   [key: string]: any;
-}
+};
 
-export interface Taskfile {
+export type Taskfile = {
   version?: string | number;
   tasks?: Record<string, Task>;
   [key: string]: any;
-}
+};
 
 export class TaskfileAdapter extends FileAdapterAbstract {
   async parse({ config }: { config?: Config }): Promise<SingleAdapterOutput> {

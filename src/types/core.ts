@@ -1,44 +1,44 @@
-export interface UserCommand {
+export type UserCommand = {
   command: string;
   workDir: string;
   label: string;
   runner: string;
-}
+};
 
-export interface SelectionItem {
+export type SelectionItem = {
   executableCommand: string;
   subcommand: string;
   label: string;
   absolutePath: string;
   workDir: string;
   color?: Colors;
-}
+};
 
 export type SingleAdapterOutput = SelectionItem[] | SelectionItem[][];
 
-export interface PatternExec {
+export type PatternExec = {
   include: string;
   exclude?: string;
   label?: string;
   runner: string;
-}
+};
 
-export interface Config {
+export type Config = {
   root?: string;
   userCommandsExec?: UserCommand[];
   shell?: string;
   patternExec?: PatternExec[];
   packageJsonExec?: PatternExec;
-}
+};
 
-export interface CLIArgs {
+export type CLIArgs = {
   help: boolean;
   version: boolean;
   init: boolean;
   command: string;
   args: string[];
   logLevel: LogLevel;
-}
+};
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
@@ -67,17 +67,17 @@ export const COLORS_ROTATION: Colors[] = [
 
 // -------------------------- temp sunset -------------------------- //
 
-export interface ChecksumEntry {
+export type ChecksumEntry = {
   path: string;
   checksum: string;
   algorithm: string;
   lastModified: string;
   fileSize: number;
   status: string;
-}
+};
 
-export interface ChecksumsFile {
+export type ChecksumsFile = {
   version: string;
   lastUpdated: string;
   files: ChecksumEntry[];
-}
+};

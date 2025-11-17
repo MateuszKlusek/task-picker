@@ -5,9 +5,9 @@ import { Config, SelectionItem, SingleAdapterOutput } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
 
-export interface PackageJson {
+export type PackageJson = {
   scripts?: Record<string, string>;
-}
+};
 
 export class PackageJsonAdapter extends FileAdapterAbstract {
   async parse({ config }: { config?: Config }): Promise<SingleAdapterOutput> {
