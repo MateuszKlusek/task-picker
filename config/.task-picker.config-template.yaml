@@ -19,3 +19,6 @@ patternExec:
     exclude: '**/*.test.ts'
     runner: npx tsx
     label: run ts file in src
+
+fzfConfig:
+    height: 50%

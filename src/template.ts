@@ -21,4 +21,7 @@ patternExec:
   - include: ./src/**/*.ts
     exclude: '**/*.test.ts'
     runner: npx tsx
-    label: run ts file in src`;
+    label: run ts file in src
+
+fzfConfig:
+    height: 50%`;

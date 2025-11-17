@@ -29,6 +29,9 @@ export type Config = {
   shell?: string;
   patternExec?: PatternExec[];
   packageJsonExec?: PatternExec;
+  fzfConfig?: {
+    height?: string;
+  };
 };
 
 export type CLIArgs = {
