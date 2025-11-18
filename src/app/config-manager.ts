@@ -6,6 +6,7 @@ import { type Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
 import { Timed } from "../utils/timer";
+import { z } from "zod";
 import { FileAdapterAbstract } from "./adapter.abstract";
 import { GENERATOR_MAP } from "./constants";
 
@@ -164,9 +165,26 @@ export class ConfigManager {
   @Timed("ConfigManager.validateConfig")
   public async validateConfig(): Promise<boolean> {
     try {
-      await this.loadConfig();
+      const config = await this.getConfigFile();
 
-      log.info("Configuration is valid");
+      const configSchema = z.object({
+        root: z.string(),
+        shell: z.string().optional(),
+        fzfConfig: z.object({
+          height: z.string().optional,
+          previewWindow: z
+            .object({
+              direction: z.enum(["down", "up", "left", "right"]).optional(),
+              percentage: z.string().optional(),
+            })
+            .optional(),
+        }),
+      });
+
+      const result = configSchema.parse(config);
+      console.log("result", result);
+
+      // log.info("Configuration is valid");
       return true;
     } catch (error) {
       log.error(`Configuration validation failed: ${error}`);
@@ -182,6 +200,7 @@ export class ConfigManager {
     return this.config;
   }
 
+  @Timed("ConfigManager.logConfig")
   public logConfig(): void {
     if (this.config) {
       log.debug(`Config: ${JSON.stringify(this.config, null, 2)}`);
