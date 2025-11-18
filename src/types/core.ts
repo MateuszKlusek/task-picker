@@ -7,7 +7,7 @@ export type UserCommand = {
 
 export type SelectionItem = {
   executableCommand: string;
-  subcommand: string;
+  command: string;
   label: string;
   absolutePath: string;
   workDir: string;
@@ -31,6 +31,10 @@ export type Config = {
   packageJsonExec?: PatternExec;
   fzfConfig?: {
     height?: string;
+    previewWindow?: {
+      direction?: "down" | "up" | "left" | "right";
+      percentage?: string;
+    };
   };
 };
 

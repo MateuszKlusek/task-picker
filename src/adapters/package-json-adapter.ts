@@ -31,7 +31,7 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
                 tempItems.push({
                   executableCommand: `${config?.packageJsonExec?.runner} ${name}`,
                   label: name,
-                  subcommand: cmd,
+                  command: cmd,
                   absolutePath: path.dirname(fileName),
                   workDir: fileDir,
                 });

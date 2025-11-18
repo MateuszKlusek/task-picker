@@ -22,3 +22,6 @@ patternExec:
 
 fzfConfig:
     height: 50%
+    previewWindow:
+      direction: right
+      percentage: 50%

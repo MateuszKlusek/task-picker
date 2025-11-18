@@ -25,10 +25,11 @@ export class FzfRunner {
       [
         "--delimiter=\t",
         "--with-nth=1",
-        "--preview=echo label: {1} ; echo subcommand: {2} ;echo executableCommand: {3} ; echo executable directory: {4} ; echo absolute path: {5}",
+        "--preview=echo label: {1} ; echo command: {2} ;echo; echo executableCommand: {3} ; echo executable directory: {4} ; echo absolute path: {5}",
         "--preview-window=wrap",
         "--ansi",
         `--height=${config?.fzfConfig?.height || "100%"}`,
+        `--preview-window=${config?.fzfConfig?.previewWindow?.direction || "right"}:${config?.fzfConfig?.previewWindow?.percentage || "50%"}`,
       ],
       {
         stdio: ["pipe", "pipe", "inherit"],
@@ -37,7 +38,7 @@ export class FzfRunner {
 
     // Write items to fzf stdin
     for (const item of items) {
-      const line = `${item.color}${item.label}${Colors.RESET}\t${item.subcommand}\t${item.executableCommand}\t${item.workDir}\t${item.absolutePath}\n`;
+      const line = `${item.color}${item.label}${Colors.RESET}\t${item.command}\t${item.executableCommand}\t${item.workDir}\t${item.absolutePath}\n`;
       fzfProcess.stdin?.write(line);
     }
     fzfProcess.stdin?.end();
@@ -83,8 +84,8 @@ export class FzfRunner {
       return;
     }
 
-    const [label, subcommand, executableCommand, workDir, absolutePath] = parts;
-    log.debug({ label, subcommand, executableCommand, workDir, absolutePath });
+    const [label, command, executableCommand, workDir, absolutePath] = parts;
+    log.debug({ label, command, executableCommand, workDir, absolutePath });
 
     const cleanCommand = executableCommand.trim();
 
