@@ -171,7 +171,7 @@ export class ConfigManager {
         root: z.string(),
         shell: z.string().optional(),
         fzfConfig: z.object({
-          height: z.string().optional,
+          height: z.string().optional(),
           previewWindow: z
             .object({
               direction: z.enum(["down", "up", "left", "right"]).optional(),
@@ -182,9 +182,9 @@ export class ConfigManager {
       });
 
       const result = configSchema.parse(config);
-      console.log("result", result);
+      log.debug(`Result: ${JSON.stringify(result, null, 2)}`);
 
-      // log.info("Configuration is valid");
+      log.info("Configuration is valid");
       return true;
     } catch (error) {
       log.error(`Configuration validation failed: ${error}`);
