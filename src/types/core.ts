@@ -30,7 +30,7 @@ export type Config = {
   patternExec?: PatternExec[];
   packageJsonExec?: PatternExec;
   fzfConfig?: {
-    height?: string;
+    windowHeight?: string;
     previewWindow?: {
       direction?: "down" | "up" | "left" | "right";
       percentage?: string;

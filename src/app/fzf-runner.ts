@@ -20,6 +20,11 @@ export class FzfRunner {
 
     const config = configManager.getConfig();
 
+    const fzfConfigToArgs = [
+      `--height=${config?.fzfConfig?.windowHeight || "100%"}`,
+      `--preview-window=${config?.fzfConfig?.previewWindow?.direction || "right"}:${config?.fzfConfig?.previewWindow?.percentage || "50%"}`,
+    ];
+
     const fzfProcess = spawn(
       "fzf",
       [
@@ -28,8 +33,7 @@ export class FzfRunner {
         "--preview=echo label: {1} ; echo command: {2} ;echo; echo executableCommand: {3} ; echo executable directory: {4} ; echo absolute path: {5}",
         "--preview-window=wrap",
         "--ansi",
-        `--height=${config?.fzfConfig?.height || "100%"}`,
-        `--preview-window=${config?.fzfConfig?.previewWindow?.direction || "right"}:${config?.fzfConfig?.previewWindow?.percentage || "50%"}`,
+        ...fzfConfigToArgs,
       ],
       {
         stdio: ["pipe", "pipe", "inherit"],

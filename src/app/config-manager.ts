@@ -1,12 +1,12 @@
 import fs from "fs";
 import * as yaml from "js-yaml";
 import * as path from "path";
+import { z } from "zod";
 import { EMBEDDED_TEMPLATE } from "../template";
 import { type Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
 import { Timed } from "../utils/timer";
-import { z } from "zod";
 import { FileAdapterAbstract } from "./adapter.abstract";
 import { GENERATOR_MAP } from "./constants";
 
@@ -163,8 +163,13 @@ export class ConfigManager {
   }
 
   @Timed("ConfigManager.validateConfig")
-  public async validateConfig(): Promise<boolean> {
+  public async validateConfig() {
     try {
+      if (!FileUtils.fileExists(this.configPath)) {
+        log.warn(`Configuration file not found: ${this.configPath}`);
+        return;
+      }
+
       const config = await this.getConfigFile();
 
       const configSchema = z.object({
@@ -185,10 +190,8 @@ export class ConfigManager {
       log.debug(`Result: ${JSON.stringify(result, null, 2)}`);
 
       log.info("Configuration is valid");
-      return true;
     } catch (error) {
       log.error(`Configuration validation failed: ${error}`);
-      return false;
     }
   }
 
