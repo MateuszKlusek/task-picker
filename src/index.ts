@@ -7,7 +7,10 @@ import { PayloadGenerator } from "./app/payload-generator";
 import { log } from "./utils/logger";
 
 const main = async (): Promise<void> => {
-  const configManager = new ConfigManager();
+  const configManager = new ConfigManager({
+    configFileName: ".task-picker-config.yaml",
+    cwd: process.cwd(),
+  });
   const cli = new CLI({ configManager });
 
   if (!cli.getDidRun()) {

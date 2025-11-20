@@ -24,7 +24,7 @@ patternExec:
     label: run ts file in src
 
 fzfConfig:
-  windowHeight: 50%
+    windowHeight: 50%
     previewWindow:
       direction: right
       percentage: 50%`;

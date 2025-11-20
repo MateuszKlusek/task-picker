@@ -10,15 +10,20 @@ import { configSchema } from "../utils/validation";
 import { FileAdapterAbstract } from "./adapter.abstract";
 import { GENERATOR_MAP } from "./constants";
 
-export class ConfigManager {
-  private config: Config | null = null;
-  private configFileName: string = ".task-picker-config.yaml";
-  private cwd: string = process.cwd();
-  private configPath: string = path.join(this.cwd, this.configFileName);
+type ConfigManagerProps = {
+  cwd: string;
+  configFileName: string;
+};
 
-  constructor() {
-    this.config = null;
-    this.cwd = process.cwd();
+export class ConfigManager {
+  private config: Config | undefined;
+  private cwd: string;
+  private configFileName: string;
+  private configPath: string;
+
+  constructor(props: ConfigManagerProps) {
+    this.cwd = props.cwd;
+    this.configFileName = props.configFileName;
     this.configPath = path.join(this.cwd, this.configFileName);
   }
 
@@ -163,21 +168,23 @@ export class ConfigManager {
   }
 
   @Timed("ConfigManager.validateConfig")
-  public async validateConfig() {
+  public async validateConfig(configPath = this.configPath): Promise<boolean> {
     try {
-      if (!FileUtils.fileExists(this.configPath)) {
-        log.warn(`Configuration file not found: ${this.configPath}`);
-        return;
+      if (!FileUtils.fileExists(configPath)) {
+        log.warn(`Configuration file not found: ${configPath}`);
+        return false;
       }
 
       const config = await this.getConfigFile();
 
-      const result = configSchema.parse(config);
-      log.debug(`Result: ${JSON.stringify(result, null, 2)}`);
+      const result = configSchema.safeParse(config);
+      log.debug(`Result: ${JSON.stringify(result.data, null, 2)}`);
 
       log.info("Configuration is valid");
+      return result.success;
     } catch (error) {
       log.error(`Configuration validation failed: ${error}`);
+      return false;
     }
   }
 
