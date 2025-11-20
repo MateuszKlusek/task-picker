@@ -33,7 +33,7 @@ class Logger {
 
   public info(message: string | object): void {
     if (this.isLogLevelEnabled("info")) {
-      console.log(
+      console.info(
         `${Colors.GREEN}[INFO]${Colors.RESET} ${this.formatMessage(message)}`
       );
     }
