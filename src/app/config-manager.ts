@@ -1,18 +1,18 @@
 import fs from "fs";
 import * as yaml from "js-yaml";
 import * as path from "path";
-import { z } from "zod";
 import { EMBEDDED_TEMPLATE } from "../template";
 import { type Config } from "../types/core";
 import { FileUtils } from "../utils/fileUtils";
 import { log } from "../utils/logger";
 import { Timed } from "../utils/timer";
+import { configSchema } from "../utils/validation";
 import { FileAdapterAbstract } from "./adapter.abstract";
 import { GENERATOR_MAP } from "./constants";
 
 export class ConfigManager {
   private config: Config | null = null;
-  private readonly configFileName = ".task-picker-config.yaml";
+  private configFileName: string = ".task-picker-config.yaml";
   private cwd: string = process.cwd();
   private configPath: string = path.join(this.cwd, this.configFileName);
 
@@ -171,20 +171,6 @@ export class ConfigManager {
       }
 
       const config = await this.getConfigFile();
-
-      const configSchema = z.object({
-        root: z.string(),
-        shell: z.string().optional(),
-        fzfConfig: z.object({
-          height: z.string().optional(),
-          previewWindow: z
-            .object({
-              direction: z.enum(["down", "up", "left", "right"]).optional(),
-              percentage: z.string().optional(),
-            })
-            .optional(),
-        }),
-      });
 
       const result = configSchema.parse(config);
       log.debug(`Result: ${JSON.stringify(result, null, 2)}`);

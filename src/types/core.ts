@@ -1,10 +1,3 @@
-export type UserCommand = {
-  command: string;
-  relativePath: string;
-  label: string;
-  runner: string;
-};
-
 export type SelectionItem = {
   command: string;
   label: string;
@@ -15,6 +8,13 @@ export type SelectionItem = {
 };
 
 export type SingleAdapterOutput = SelectionItem[] | SelectionItem[][];
+
+export type UserCommand = {
+  command: string;
+  relativePath: string;
+  label: string;
+  runner: string;
+};
 
 export type PatternExec = {
   include: string;
@@ -49,7 +49,7 @@ export type CLIArgs = {
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
-// -------------------------- colors -------------------------- //
+// -------------------------- colors --------------------------
 
 export enum Colors {
   RED = "\x1b[31m",
@@ -72,7 +72,7 @@ export const COLORS_ROTATION: Colors[] = [
   Colors.WHITE,
 ];
 
-// -------------------------- temp sunset -------------------------- //
+// -------------------------- temp sunset --------------------------
 
 export type ChecksumEntry = {
   path: string;

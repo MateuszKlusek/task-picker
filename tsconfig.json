@@ -22,7 +22,7 @@
   },
   "include": [
     "src/**/*"
-  ],
+, "test/template.test.ts"  ],
   "exclude": [
     "node_modules",
     "dist",
