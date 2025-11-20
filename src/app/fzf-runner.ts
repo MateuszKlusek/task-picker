@@ -99,7 +99,7 @@ export class FzfRunner {
 
     const cleanCommand = command.trim();
 
-    // directory change
+    // ------------------------------ directory change ------------------------------
     if (absolutePath && absolutePath !== process.cwd()) {
       try {
         process.chdir(absolutePath);
@@ -110,17 +110,14 @@ export class FzfRunner {
       }
     }
 
-    // mimmick the terminal prompt
+    // ------------------------------ setting up the shell ------------------------------
     console.log(`${Colors.GREEN}❯ ${cleanCommand}${Colors.RESET}`);
-
-    // Use the specified shell or default
     const shell = config?.shell || process?.env?.SHELL || "/bin/bash";
-
     // needed for colors in the terminal
     process.env.CLICOLOR = "1";
     process.env.FORCE_COLOR = "1";
 
-    // Execute the command
+    // ------------------------------ executing the command ------------------------------
     const childProcess = spawn(shell, ["-c", cleanCommand], {
       stdio: "inherit",
       env: process.env,
