@@ -1,11 +1,14 @@
 import * as yaml from "js-yaml";
 import path from "path";
 import { describe, expect, it } from "vitest";
+import { ConfigManager } from "../src/app/config-manager";
 import { Config } from "../src/types/core";
 import { FileUtils } from "../src/utils/fileUtils";
 import { configSchema } from "../src/utils/validation";
 
-describe("yaml config template", () => {
+const cm = new ConfigManager();
+
+describe("config", () => {
   const templatePath = path.join(
     process.cwd(),
     "config/.task-picker.config-template.yaml"
