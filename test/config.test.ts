@@ -8,7 +8,7 @@ let testDir: string;
 
 beforeAll(async () => {
   testDir = await mkdtemp(join(process.cwd(), "test/test-files-"));
-  log.setLogLevel("warn");
+  log.setLogLevel("info");
 });
 
 afterAll(async () => {
@@ -22,7 +22,7 @@ describe("Config Manager", async () => {
     await mkdir(configDir, { recursive: true });
     await copyFile(
       join(process.cwd(), "config", ".task-picker.config-template.yaml"),
-      join(testDir, "config", ".task-picker.config-template.yaml")
+      join(configDir, ".task-picker.config-template.yaml")
     );
 
     const cm = new ConfigManager({

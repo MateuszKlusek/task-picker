@@ -104,10 +104,7 @@ export class ConfigManager {
   }
 
   @Timed("ConfigManager.initializeConfig")
-  async initializeConfig(
-    override: boolean = false,
-    templateOverride: any = {}
-  ): Promise<void> {
+  async initializeConfig(override: boolean = false): Promise<void> {
     log.debug(`Override flag: ${override}`);
 
     if (FileUtils.fileExists(this.configPath) && !override) {
@@ -138,8 +135,6 @@ export class ConfigManager {
         "config/.task-picker.config-template.yaml"
       );
 
-      console.log("templatePath", templatePath);
-
       if (FileUtils.fileExists(templatePath)) {
         try {
           const templateContent = FileUtils.readFile(templatePath);
@@ -154,12 +149,11 @@ export class ConfigManager {
 
     const finalConfig = {
       ...templateConfig,
-      ...templateOverride,
       root: process.cwd(),
     };
 
-    console.log("finalConfig", finalConfig);
-    console.log("this.configPath", this.configPath);
+    log.debug(`finalConfig: ${JSON.stringify(finalConfig, null, 2)}`);
+    log.debug(`this.configPath: ${this.configPath}`);
 
     await this.saveConfigFile(finalConfig);
 
