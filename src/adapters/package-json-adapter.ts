@@ -27,13 +27,15 @@ export class PackageJsonAdapter extends FileAdapterAbstract {
 
             if (packageJson.scripts) {
               const tempItems: SelectionItem[] = [];
-              for (const [name, cmd] of Object.entries(packageJson.scripts)) {
+              for (const [name, _] of Object.entries(packageJson.scripts)) {
+                const runner = config?.packageJsonExec?.runner || "npm run";
+
                 tempItems.push({
-                  executableCommand: `${config?.packageJsonExec?.runner} ${name}`,
+                  command: `${runner} ${name}`,
                   label: name,
-                  command: cmd,
-                  absolutePath: path.dirname(fileName),
-                  workDir: fileDir,
+                  runner,
+                  absolutePath: fileDir,
+                  relativePath: path.relative(fileDir, process.cwd()),
                 });
               }
               return tempItems;

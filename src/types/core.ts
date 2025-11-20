@@ -1,16 +1,16 @@
 export type UserCommand = {
   command: string;
-  workDir: string;
+  relativePath: string;
   label: string;
   runner: string;
 };
 
 export type SelectionItem = {
-  executableCommand: string;
   command: string;
   label: string;
+  relativePath: string;
   absolutePath: string;
-  workDir: string;
+  runner: string;
   color?: Colors;
 };
 

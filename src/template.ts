@@ -5,11 +5,11 @@ export const EMBEDDED_TEMPLATE = `shell: /bin/zsh
 
 userCommandsExec:
   - command: ls
-    workDir: ./
+    relativePath: ./
     label: list files
     runner: ''
   - command: run test
-    workDir: ./
+    relativePath: ./
     label: run test
     runner: npx
 
@@ -24,7 +24,7 @@ patternExec:
     label: run ts file in src
 
 fzfConfig:
-    height: 50%
+    windowHeight: 50%
     previewWindow:
       direction: right
       percentage: 50%`;

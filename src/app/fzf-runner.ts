@@ -30,7 +30,7 @@ export class FzfRunner {
       [
         "--delimiter=\t",
         "--with-nth=1",
-        "--preview=echo label: {1} ; echo command: {2} ;echo; echo executableCommand: {3} ; echo executable directory: {4} ; echo absolute path: {5}",
+        "--preview=echo label: {1} ; echo command: {2} ;echo; echo runner: {3} ; echo relative path: {4} ; echo absolute path: {5}",
         "--preview-window=wrap",
         "--ansi",
         ...fzfConfigToArgs,
@@ -40,14 +40,18 @@ export class FzfRunner {
       }
     );
 
-    // Write items to fzf stdin
+    const createFzfLine = (item: SelectionItem) => {
+      return `${item.color}${item.label}${Colors.RESET}\t${item.command}\t${item.runner}\t${item.relativePath}\t${item.absolutePath}\t${JSON.stringify(item)}\n`;
+    };
+
+    // --------------------- Write items to fzf stdin ---------------------
     for (const item of items) {
-      const line = `${item.color}${item.label}${Colors.RESET}\t${item.command}\t${item.executableCommand}\t${item.workDir}\t${item.absolutePath}\n`;
+      const line = createFzfLine(item);
       fzfProcess.stdin?.write(line);
     }
     fzfProcess.stdin?.end();
 
-    // Handle selection
+    // --------------------- Handle selection from fzf ---------------------
     let selectedData = "";
     fzfProcess.stdout?.on("data", (data) => {
       selectedData += data.toString();
@@ -83,21 +87,23 @@ export class FzfRunner {
     config: Config;
   }): void {
     const parts = selected.split("\t");
-    if (parts.length < 2) {
+    if (parts.length < 3) {
       log.error(`Unexpected selection format: ${selected}`);
       return;
     }
 
-    const [label, command, executableCommand, workDir, absolutePath] = parts;
-    log.debug({ label, command, executableCommand, workDir, absolutePath });
+    const json = JSON.parse(parts[parts.length - 1]) as SelectionItem;
+    const { absolutePath, command } = json;
 
-    const cleanCommand = executableCommand.trim();
+    log.debug({ json });
+
+    const cleanCommand = command.trim();
 
     // directory change
-    if (workDir && workDir !== process.cwd()) {
+    if (absolutePath && absolutePath !== process.cwd()) {
       try {
-        process.chdir(workDir);
-        log.debug(`Changed to directory: ${workDir}`);
+        process.chdir(absolutePath);
+        log.debug(`Changed to directory: ${absolutePath}`);
       } catch (error) {
         log.error(`Failed to change directory: ${error}`);
         process.exit(1);
@@ -108,7 +114,7 @@ export class FzfRunner {
     console.log(`${Colors.GREEN}❯ ${cleanCommand}${Colors.RESET}`);
 
     // Use the specified shell or default
-    const shell = config?.shell || process.env.SHELL || "/bin/bash";
+    const shell = config?.shell || process?.env?.SHELL || "/bin/bash";
 
     // needed for colors in the terminal
     process.env.CLICOLOR = "1";
