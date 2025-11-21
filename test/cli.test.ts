@@ -1,21 +1,18 @@
 import { spawnSync } from "node:child_process";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, inject, it } from "vitest";
+import { beforeAll, describe, expect, inject, it } from "vitest";
 import { CLI } from "../src/app/cli";
 import { ConfigManager } from "../src/app/config-manager";
 import { log } from "../src/utils/logger";
 
-const { value } = inject("ctx");
+const { value, testDir, buildPath } = inject("ctx");
 
 // TODO: reconsider appraoch
-const distPath = join(process.cwd(), "dist/index.js");
-let testDir: string;
+
 let cli: CLI;
 let cm: ConfigManager;
 
 beforeAll(async () => {
-  testDir = await mkdtemp(join(process.cwd(), "test/test-files-"));
   log.setLogLevel("debug");
 
   cm = new ConfigManager({
@@ -25,19 +22,13 @@ beforeAll(async () => {
 
   cli = new CLI({ configManager: cm });
 
-  await mkdir(testDir, { recursive: true });
-
   spawnSync("npm", ["run", "build"]);
   console.log("ctx", value);
 });
 
-afterAll(async () => {
-  await rm(testDir, { recursive: true, force: true });
-});
-
 describe("CLI", () => {
   it("should print help", () => {
-    const result = spawnSync("node", [distPath, "help"], {
+    const result = spawnSync("node", [buildPath, "help"], {
       encoding: "utf-8",
     });
 
@@ -45,7 +36,7 @@ describe("CLI", () => {
   });
 
   it("should print version", () => {
-    const result = spawnSync("node", [distPath, "version"], {
+    const result = spawnSync("node", [buildPath, "version"], {
       encoding: "utf-8",
     });
 
@@ -53,7 +44,7 @@ describe("CLI", () => {
   });
 
   it("should exec init - the config file should be created ", async () => {
-    const result = spawnSync("node", [distPath, "init"], {
+    const result = spawnSync("node", [buildPath, "init"], {
       cwd: testDir,
       encoding: "utf-8",
     });
@@ -62,7 +53,7 @@ describe("CLI", () => {
   });
 
   it("should exec init - the config file should exist", async () => {
-    const result = spawnSync("node", [distPath, "init"], {
+    const result = spawnSync("node", [buildPath, "init"], {
       cwd: testDir,
       encoding: "utf-8",
     });
@@ -71,7 +62,7 @@ describe("CLI", () => {
   });
 
   it("should exec init - override the config file", async () => {
-    const result = spawnSync("node", [distPath, "init", "--override"], {
+    const result = spawnSync("node", [buildPath, "init", "--override"], {
       cwd: testDir,
       encoding: "utf-8",
     });

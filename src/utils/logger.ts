@@ -55,6 +55,10 @@ class Logger {
     }
   }
 
+  public withPrefix(prefix: string, message: string | object) {
+    console.log(`${prefix} ${this.formatMessage(message)}`);
+  }
+
   private isLogLevelEnabled(logLevel: LogLevel): boolean {
     return (
       LogLevelList.indexOf(logLevel) >= LogLevelList.indexOf(this.logLevel)
