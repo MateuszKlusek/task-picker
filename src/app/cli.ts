@@ -36,7 +36,8 @@ export class CLI {
       .option("-o, --override", "Override existing configuration")
       .action(async (options) => {
         this.didRun = true;
-        await this.configManager.initializeConfig(options.override);
+        log.debug(`options: ${JSON.stringify(options, null, 2)}`);
+        await this.configManager.initializeConfig(options?.override);
       });
 
     this.program

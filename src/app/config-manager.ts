@@ -113,6 +113,10 @@ export class ConfigManager {
       return;
     }
 
+    if (FileUtils.fileExists(this.configPath) && override) {
+      log.info(`Overwriting ${this.configFileName}`);
+    }
+
     // Load template - try embedded template first, then fallback to file system
     let templateConfig = {};
 
@@ -125,8 +129,6 @@ export class ConfigManager {
         log.warn(`Failed to load embedded template: ${error}`);
       }
     }
-
-    await this.upsertConfigKey("root", process.cwd());
 
     // Fallback: try to load from file system (for development)
     if (!templateConfig || Object.keys(templateConfig).length === 0) {
@@ -156,6 +158,7 @@ export class ConfigManager {
     log.debug(`this.configPath: ${this.configPath}`);
 
     await this.saveConfigFile(finalConfig);
+    await this.upsertConfigKey("root", process.cwd());
 
     log.info(`Created ${this.configFileName} with template configuration`);
     log.info("You can now edit this file to add your task definitions.");
